@@ -5,8 +5,7 @@
             <div class="card-image">
                 <figure>
                 <img
-                    :src="pokemon.front"
-                    alt="Placeholder image"
+                    :src="currentImg" alt="Placeholder image"
                 />
                 </figure>
             </div>
@@ -21,8 +20,8 @@
                 </div>
 
                 <div class="content">
-                
-        </div>
+                    <button class="button" @click="mudarSprite">Mudar Sprite</button>
+                </div>
 
   </div>
 </div>
@@ -35,16 +34,18 @@
 <script>
 import axios from 'axios';
 export default {
-    created: function(){
+    created: function(){ //metodo create serve como uma função chamada no carregamento da pagina
         axios.get(this.url).then(res => {
             this.pokemon.type = res.data.types[0].type.name;
             this.pokemon.front = res.data.sprites.front_default;
             this.pokemon.back = res.data.sprites.back_default;
-            console.log(this.pokemon)
+            this.currentImg = this.pokemon.front;
         })
     },
-    data() {
+    data() { //data armazena variaveis
         return {
+            isFront: true,
+            currentImg: '',
             pokemon: {
                 type: '',
                 front: '',
@@ -52,15 +53,26 @@ export default {
             }
         }
     },
-    props: {
+    props: { // Props são utilizadas para passar dados entre componentes de Filho para Pai
         name: String,
         url: String,
         num: Number
     },
-    filters: {
+    filters: { //Filtros são utilizados como logicas para apresentação das informações
         upper: function(value) {
             var newName = value[0].toUpperCase() + value.slice(1);
             return newName;
+        }
+    },
+    methods: { //Metodos onde posso criar funções ou eventos(onclick, onover ETC)
+        mudarSprite: function() {
+            if (this.isFront) {
+                this.isFront = false;
+                this.currentImg = this.pokemon.back;
+            } else {
+                this.isFront = true;
+                this.currentImg = this.pokemon.front;
+            }
         }
     }
 }
